@@ -1,3 +1,4 @@
+let screen = windows.screen;
 let board;
 let boardWidth = screen.width;
 let boardHeight = 600;
