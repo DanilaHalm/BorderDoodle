@@ -1,6 +1,6 @@
 let board = document.getElementById("board");
-let boardWidth = !(board.style.width % 2) ? board.style.width : board.style.width - 1;
-let boardHeight = board.style.height;
+let boardWidth;
+let boardHeight;
 let context;
 
 //doodler
@@ -18,15 +18,14 @@ let doodler = {
 
 window.onload = function() {
   board = document.getElementById("board");
+  boardWidth = !(board.style.width % 2) ? board.style.width : board.style.width - 1;
+  boardHeight = board.style.height;
+  board.width = boardWidth;
+  board.height = boardHeight;
   context = board.getContext("2d");
 
   context.fillStyle = "red";
-  context.fillRect(
-    doodler.x,
-    doodler.y,
-    doodler.width,
-    doodler.height
-  );
+  context.fillRect(doodler.x,doodler.y,doodler.width,doodler.height);
   
 }
 
