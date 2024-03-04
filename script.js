@@ -19,7 +19,7 @@ let doodler = {
 window.onload = function() {
   context = board.getContext("2d");
 
-  context.fillStyle("red");
+  context.fillStyle = "red";
   context.fillRect(
     doodler.x,
     doodler.y,
