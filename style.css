@@ -4,4 +4,6 @@ body {
 }
 #board {
   background-color: green;
+  width: 100vw;
+  height: 580px;
 }
