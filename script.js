@@ -1,6 +1,6 @@
 let screen = windows.screen;
 let board;
-let boardWidth = screen.width;
+let boardWidth = Math.floor(screen.width);
 let boardHeight = 600;
 let context;
 
