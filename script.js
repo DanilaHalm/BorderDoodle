@@ -17,6 +17,7 @@ let doodler = {
 }
 
 window.onload = function() {
+  board = document.getElementById("board");
   context = board.getContext("2d");
 
   context.fillStyle = "red";
