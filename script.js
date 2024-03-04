@@ -1,5 +1,5 @@
 let board = document.getElementById("board");
-let boardWidth = board.style.width;
+let boardWidth = !(board.style.width % 2) ? board.style.width : board.style.width - 1;
 let boardHeight = board.style.height;
 let context;
 
