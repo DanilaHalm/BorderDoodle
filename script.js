@@ -1,7 +1,6 @@
-let screen = windows.screen;
 let board;
-let boardWidth = Math.floor(screen.width);
-let boardHeight = 600;
+let boardWidth = 400;
+let boardHeight = 500;
 let context;
 
 window.onload = function() {
