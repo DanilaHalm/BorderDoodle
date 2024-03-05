@@ -43,6 +43,7 @@ window.onload = function () {
   document.addEventListener("keydown", moveDoodlerX);
   document.addEventListener("keyup", stopDoodlerX);
   document.addEventListener("touchmove", touchMoveDoodlerX);
+  document.addEventListener("touchend", touchStopDoodlerX);
 };
 
 const update = () => {
@@ -91,8 +92,12 @@ const touchMoveDoodlerX = (e) => {
 }
 
 const stopDoodlerX = (e) => {
-  if (e.code === "ArrowRight" || e.code === "ArrowLeft") velocityX = 0;
+  if (e.code? === "ArrowRight" || e.code? === "ArrowLeft") velocityX = 0;
 };
+
+const touchStopDoodlerX = (e) => {
+  velocityX = 0
+}
 
 const placePlatforms = () => {
   platformArray = [];
