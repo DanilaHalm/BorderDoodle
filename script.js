@@ -94,13 +94,16 @@ const placePlatforms = () => {
   };
   platformArray.push(platform);
 
-  platform = {
-    x: doodlerWidth * 2,
-    y: boardHeight - doodlerHeight - 150,
-    width: platformWidth,
-    height: platformHeight,
-  };
-  platformArray.push(platform);
+  for (let i = 0; i < 6; i++) {
+    let randomX = Math.floor((Math.random() * boardWidth * 3) / 4);
+    let platform = {
+      x: randomX,
+      y: boardHeight - 75 * i - 150,
+      width: platformWidth,
+      height: platformHeight,
+    };
+    platformArray.push(platform);
+  }
 };
 
 const checkCollision = (firstElement, secondElement) => {
