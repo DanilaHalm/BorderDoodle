@@ -82,8 +82,9 @@ const moveDoodlerX = (e) => {
 };
 
 const touchMoveDoodlerX = (e) => {
-  [...e.changedTouches].map(touch => {
-    let isRight = touch.pageX > screenWidth / 2
+  [...e.changedTouches].map((touch,idx) => {
+   // let isRight = touch.pageX > screenWidth / 2
+    let isRight = touch.pageX > changedTouches[idx-1].pageX
     if(isRight) velocityX= 4
     else {
       velocityX = -4
@@ -96,6 +97,7 @@ const stopDoodlerX = (e) => {
 };
 
 const touchStopDoodlerX = (e) => {
+  
   velocityX = 0
 }
 
