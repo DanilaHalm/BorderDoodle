@@ -1,6 +1,6 @@
 let board;
 let screenWidth = window.screen.width;
-let boardWidth = screenWidth > 370 ? 370 : screenWidth;
+let boardWidth = screenWidth > 400 ? 400 : screenWidth;
 let boardHeight = 740;
 let context;
 
