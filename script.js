@@ -42,6 +42,7 @@ window.onload = function () {
   requestAnimationFrame(update);
   document.addEventListener("keydown", moveDoodlerX);
   document.addEventListener("keyup", stopDoodlerX);
+  document.addEventListener("touchmove", touchMoveDoodlerX);
 };
 
 const update = () => {
@@ -78,6 +79,16 @@ const moveDoodlerX = (e) => {
     velocityX = -4;
   }
 };
+
+const touchMoveDoodlerX = (e) => {
+  [...e.changedTouches].map(touch => {
+    let isRight = touch.pageX > screenWidth / 2
+    if(isRight) velocityX= 4
+    else {
+      velocityX = -4
+    }
+  })
+}
 
 const stopDoodlerX = (e) => {
   if (e.code === "ArrowRight" || e.code === "ArrowLeft") velocityX = 0;
