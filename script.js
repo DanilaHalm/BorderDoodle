@@ -42,6 +42,8 @@ window.onload = function () {
   requestAnimationFrame(update);
   document.addEventListener("keydown", moveDoodlerX);
   document.addEventListener("keyup", stopDoodlerX);
+  document.addEventListener("touchmove", touchMoveDoodlerX);
+  document.addEventListener("touchend", touchStopDoodlerX);
 };
 
 const update = () => {
@@ -93,9 +95,25 @@ const moveDoodlerX = (e) => {
   }
 };
 
+const touchMoveDoodlerX = (e) => {
+  [...e.changedTouches].map((touch,idx) => {
+   // let isRight = touch.pageX > screenWidth / 2
+    let isRight = touch.pageX > changedTouches[idx-1].pageX
+    if(isRight) velocityX= 4
+    else {
+      velocityX = -4
+    }
+  })
+}
+
 const stopDoodlerX = (e) => {
-  if (e.code === "ArrowRight" || e.code === "ArrowLeft") velocityX = 0;
+  if (e.code? === "ArrowRight" || e.code? === "ArrowLeft") velocityX = 0;
 };
+
+const touchStopDoodlerX = (e) => {
+  
+  velocityX = 0
+}
 
 const placePlatforms = () => {
   platformArray = [];
