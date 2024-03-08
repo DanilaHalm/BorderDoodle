@@ -20,7 +20,7 @@ let doodler = {
 //platforms
 let platformArray = [];
 let platformWidth = Math.floor(boardWidth / 5);
-let platformHeight = 25;
+let platformHeight = 30;
 
 //physics
 let velocityX = 0;
@@ -61,12 +61,26 @@ const update = () => {
   context.fillRect(doodler.x, doodler.y, doodler.width, doodler.height);
 
   //platforms
+  let platform;
   for (let i = 0; i < platformArray.length; i++) {
-    let platform = platformArray[i];
-    if (checkCollision(doodler, platform) && velocityY > 0) {
+    platform = platformArray[i];
+    if (doodler.y + doodler.height < (boardHeight * 1) / 5) {
+      platform.y -= initialVelocity - 2;
+    } else if (velocityY < -2 && doodler.y + doodler.height < (boardHeight * 3) / 4) {
+      platform.y -= initialVelocity + 2;
+      doodler.y += gravity;
+    }
+    if (doodler.y > 0 && checkCollision(doodler, platform) && velocityY > 4) {
       velocityY = initialVelocity;
     }
     context.fillRect(platform.x, platform.y, platform.width, platform.height);
+    context.fillRect(0, (boardHeight * 3) / 4, boardWidth, 2);
+  }
+
+  //clear platforms and add new
+  while (platformArray.length > 0 && platformArray[0].y >= boardHeight) {
+    platformArray.shift();
+    newPlatform();
   }
 };
 
@@ -94,7 +108,7 @@ const placePlatforms = () => {
   };
   platformArray.push(platform);
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     let randomX = Math.floor((Math.random() * boardWidth * 3) / 4);
     let platform = {
       x: randomX,
@@ -106,11 +120,22 @@ const placePlatforms = () => {
   }
 };
 
+const newPlatform = () => {
+  let randomX = Math.floor((Math.random() * boardWidth * 3) / 4);
+  let platform = {
+    x: randomX,
+    y: -platformHeight,
+    width: platformWidth,
+    height: platformHeight,
+  };
+  platformArray.push(platform);
+};
+
 const checkCollision = (firstElement, secondElement) => {
   return (
     firstElement.x < secondElement.x + secondElement.width &&
     firstElement.x + firstElement.width > secondElement.x &&
-    firstElement.y < secondElement.y + secondElement.height &&
+    firstElement.y < secondElement.y &&
     firstElement.y + firstElement.height > secondElement.y
   );
 };
