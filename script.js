@@ -5,12 +5,28 @@ let boardHeight = 720;
 let context;
 
 //doodler
-let doodlerWidth = 50;
-let doodlerHeight = 50;
+let doodlerWidth = 70;
+let doodlerHeight = 70;
 let doodlerX = boardWidth / 2 - doodlerWidth / 2;
 let doodlerY = boardHeight - doodlerHeight * 2;
+let doodlerSprite;
+
+let doodlerStates = {
+  ready: 0,
+  starting: 279,
+  jumping: 558,
+  top: 837,
+  startFall: 1116,
+  falling: 1395,
+  beforeFall: 1674,
+  left: 0,
+  right: 250,
+};
 
 let doodler = {
+  img: null,
+  state: "jumping",
+  side: "left",
   width: doodlerWidth,
   height: doodlerHeight,
   x: doodlerX,
@@ -34,8 +50,24 @@ window.onload = function () {
   board.height = boardHeight;
   context = board.getContext("2d");
 
-  context.fillStyle = "red";
-  context.fillRect(doodler.x, doodler.y, doodler.width, doodler.height);
+  doodlerSprite = new Image();
+  doodlerSprite.src = "./assets/border-sprite.png";
+  //УБРАТЬ ПО 45px со спрайта снизу и центра
+
+  doodler.img = doodlerSprite;
+  doodlerSprite.onload = function () {
+    context.drawImage(
+      doodler.img,
+      doodlerStates[doodler.state],
+      doodlerStates[doodler.side],
+      279,
+      250,
+      doodler.x,
+      doodler.y,
+      doodler.width,
+      doodler.height
+    );
+  };
 
   velocityY = initialVelocity;
   placePlatforms();
@@ -56,12 +88,37 @@ const update = () => {
   velocityY += gravity;
   doodler.y += velocityY;
 
+  // animation doodler
+  if (velocityY > -8 && velocityY < -6) {
+    doodler.state = "ready";
+  } else if (velocityY > -6 && velocityY < -4) {
+    doodler.state = "starting";
+  } else if (velocityY > -4 && velocityY < -2) {
+    doodler.state = "jumping";
+  } else if (velocityY > -1 && velocityY < 1) {
+    doodler.state = "top";
+  } else if (velocityY > 1 && velocityY < 4) {
+    doodler.state = "startFall";
+  } else if (velocityY > 4 && velocityY < 6) {
+    doodler.state = "falling";
+  }
+
   if (doodler.x > boardWidth) {
     doodler.x = 0 - doodler.width;
   } else if (doodler.x + doodler.width < 0) {
     doodler.x = boardWidth;
   }
-  context.fillRect(doodler.x, doodler.y, doodler.width, doodler.height);
+  context.drawImage(
+    doodler.img,
+    doodlerStates[doodler.state],
+    doodlerStates[doodler.side],
+    279,
+    250,
+    doodler.x,
+    doodler.y,
+    doodler.width,
+    doodler.height
+  );
 
   //platforms
   let platform;
@@ -89,19 +146,24 @@ const update = () => {
 
 const moveDoodlerX = (e) => {
   if (e.code === "ArrowRight") {
+    doodler.side = "right";
     velocityX = 4;
   }
   if (e.code === "ArrowLeft") {
     velocityX = -4;
+    doodler.side = "left";
   }
 };
 
 const touchMoveDoodlerX = (e) => {
   let touch = [...e.changedTouches][0];
   let isRight = touch.pageX > boardWidth / 2;
-  if (isRight) velocityX = 4;
-  else {
+  if (isRight) {
+    velocityX = 4;
+    doodler.side = "right";
+  } else {
     velocityX = -4;
+    doodler.side = "left";
   }
 };
 
