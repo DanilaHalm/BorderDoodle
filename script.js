@@ -43,7 +43,12 @@ let platformStates = {
   scared: 356,
   angry: 712,
 };
-let angryTimer = 100;
+let angryTimer = 50;
+
+//layers
+let layer1;
+let layer2;
+let layer3;
 
 //physics
 let velocityX = 0;
@@ -56,6 +61,17 @@ window.onload = function () {
   board.width = boardWidth;
   board.height = boardHeight;
   context = board.getContext("2d");
+
+  layer1 = new Image();
+  layer1.src = "./assets/layer-1.png";
+  layer2 = new Image();
+  layer2.src = "./assets/layer-2.png";
+  layer3 = new Image();
+  layer3.src = "./assets/layer-3.png";
+
+  context.drawImage(layer1, 0, 0, boardWidth, 2000);
+  context.drawImage(layer2, 0, 0, boardWidth, 2000);
+  context.drawImage(layer3, 0, 0, boardWidth, 2000);
 
   doodlerSprite = new Image();
   doodlerSprite.src = "./assets/border-sprite.png";
@@ -91,8 +107,13 @@ window.onload = function () {
 const update = () => {
   requestAnimationFrame(update);
 
-  //doodler
   context.clearRect(0, 0, board.width, board.height);
+
+  context.drawImage(layer1, 0, 0, boardWidth, 2000);
+  context.drawImage(layer2, 0, 0, boardWidth, 2000);
+  context.drawImage(layer3, 0, 0, boardWidth, 2000);
+
+  //doodler
   doodler.x += velocityX;
   velocityY += gravity;
   doodler.y += velocityY;
@@ -160,7 +181,7 @@ const update = () => {
     if (doodler.y > 0 && checkCollision(doodler, platform) && velocityY > 4) {
       velocityY = initialVelocity;
       platform.state = "angry";
-      angryTimer = 10;
+      angryTimer = 50;
     }
     context.drawImage(
       platform.img,
