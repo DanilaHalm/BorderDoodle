@@ -20,7 +20,7 @@ let doodlerStates = {
   falling: 1395,
   beforeFall: 1674,
   left: 0,
-  right: 250,
+  right: 205,
 };
 
 let doodler = {
@@ -35,8 +35,15 @@ let doodler = {
 
 //platforms
 let platformArray = [];
-let platformWidth = Math.floor(boardWidth / 5);
-let platformHeight = 30;
+let platformWidth = Math.floor(boardWidth / 5) + 10;
+let platformHeight = 45;
+let platformSprite;
+let platformStates = {
+  idle: 0,
+  scared: 356,
+  angry: 712,
+};
+let angryTimer = 100;
 
 //physics
 let velocityX = 0;
@@ -52,7 +59,6 @@ window.onload = function () {
 
   doodlerSprite = new Image();
   doodlerSprite.src = "./assets/border-sprite.png";
-  //УБРАТЬ ПО 45px со спрайта снизу и центра
 
   doodler.img = doodlerSprite;
   doodlerSprite.onload = function () {
@@ -61,13 +67,16 @@ window.onload = function () {
       doodlerStates[doodler.state],
       doodlerStates[doodler.side],
       279,
-      250,
+      205,
       doodler.x,
       doodler.y,
       doodler.width,
       doodler.height
     );
   };
+
+  platformSprite = new Image();
+  platformSprite.src = "./assets/sheep-sprite.png";
 
   velocityY = initialVelocity;
   placePlatforms();
@@ -103,17 +112,19 @@ const update = () => {
     doodler.state = "falling";
   }
 
+  //move doodler outside of board
   if (doodler.x > boardWidth) {
     doodler.x = 0 - doodler.width;
   } else if (doodler.x + doodler.width < 0) {
     doodler.x = boardWidth;
   }
+
   context.drawImage(
     doodler.img,
     doodlerStates[doodler.state],
     doodlerStates[doodler.side],
     279,
-    250,
+    205,
     doodler.x,
     doodler.y,
     doodler.width,
@@ -124,6 +135,22 @@ const update = () => {
   let platform;
   for (let i = 0; i < platformArray.length; i++) {
     platform = platformArray[i];
+    //animation platform
+    if (platform.state === "angry" && angryTimer > 0) {
+      angryTimer -= 1;
+    } else {
+      if (
+        doodler.y + doodler.height <= platform.y &&
+        doodler.x + doodler.width > platform.x &&
+        platform.x + platform.width > doodler.x
+      ) {
+        platform.state = "scared";
+      } else {
+        platform.state = "idle";
+      }
+    }
+
+    // collision
     if (doodler.y + doodler.height < (boardHeight * 1) / 5) {
       platform.y -= initialVelocity - 2;
     } else if (velocityY < -2 && doodler.y + doodler.height < (boardHeight * 3) / 4) {
@@ -132,9 +159,20 @@ const update = () => {
     }
     if (doodler.y > 0 && checkCollision(doodler, platform) && velocityY > 4) {
       velocityY = initialVelocity;
+      platform.state = "angry";
+      angryTimer = 10;
     }
-    context.fillRect(platform.x, platform.y, platform.width, platform.height);
-    context.fillRect(0, (boardHeight * 3) / 4, boardWidth, 2);
+    context.drawImage(
+      platform.img,
+      platformStates[platform.state],
+      0,
+      356,
+      242,
+      platform.x,
+      platform.y,
+      platform.width,
+      platform.height
+    );
   }
 
   //clear platforms and add new
@@ -179,6 +217,8 @@ const placePlatforms = () => {
   platformArray = [];
 
   let platform = {
+    img: platformSprite,
+    state: "idle",
     x: boardWidth / 2 - doodlerWidth / 2,
     y: boardHeight - doodlerHeight,
     width: platformWidth,
@@ -189,6 +229,8 @@ const placePlatforms = () => {
   for (let i = 0; i < 8; i++) {
     let randomX = Math.floor((Math.random() * boardWidth * 3) / 4);
     let platform = {
+      img: platformSprite,
+      state: "idle",
       x: randomX,
       y: boardHeight - 75 * i - 150,
       width: platformWidth,
@@ -201,6 +243,8 @@ const placePlatforms = () => {
 const newPlatform = () => {
   let randomX = Math.floor((Math.random() * boardWidth * 3) / 4);
   let platform = {
+    img: platformSprite,
+    state: "idle",
     x: randomX,
     y: -platformHeight,
     width: platformWidth,
