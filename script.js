@@ -1,7 +1,7 @@
 let board;
 let screenWidth = window.screen.width;
 let boardWidth = screenWidth > 400 ? 400 : screenWidth;
-let boardHeight = 720;
+let boardHeight = 700;
 let context;
 
 //doodler
@@ -46,9 +46,46 @@ let platformStates = {
 let angryTimer = 50;
 
 //layers
-let layer1;
-let layer2;
-let layer3;
+let layersHeight = 2000;
+let initialY = -(layersHeight - boardHeight);
+
+let layer1 = {
+  first: {
+    img: null,
+    speed: 7,
+    y: initialY,
+  },
+  second: {
+    img: null,
+    speed: 7,
+    y: initialY - layersHeight,
+  },
+};
+let layer2 = {
+  first: {
+    img: null,
+    speed: 5,
+    y: initialY,
+  },
+  second: {
+    img: null,
+    speed: 5,
+    y: initialY - layersHeight,
+  },
+};
+let layer3 = {
+  first: {
+    img: null,
+    speed: 3,
+    y: initialY,
+  },
+  second: {
+    img: null,
+    speed: 3,
+    y: initialY - layersHeight,
+  },
+};
+let layers = [layer1, layer2, layer3];
 
 //physics
 let velocityX = 0;
@@ -62,16 +99,26 @@ window.onload = function () {
   board.height = boardHeight;
   context = board.getContext("2d");
 
-  layer1 = new Image();
-  layer1.src = "./assets/layer-1.png";
-  layer2 = new Image();
-  layer2.src = "./assets/layer-2.png";
-  layer3 = new Image();
-  layer3.src = "./assets/layer-3.png";
+  layer1Image = new Image();
+  layer1Image.src = "./assets/layer-1.png";
+  layer1.first.img = layer1Image;
+  layer1.second.img = layer1Image;
+  layer2Image = new Image();
+  layer2Image.src = "./assets/layer-2.png";
+  layer2.first.img = layer2Image;
+  layer2.second.img = layer2Image;
+  layer3Image = new Image();
+  layer3Image.src = "./assets/layer-3.png";
+  layer3.first.img = layer3Image;
+  layer3.second.img = layer3Image;
 
-  context.drawImage(layer1, 0, 0, boardWidth, 2000);
-  context.drawImage(layer2, 0, 0, boardWidth, 2000);
-  context.drawImage(layer3, 0, 0, boardWidth, 2000);
+  for (let i = 0; i < layers.length; i++) {
+    let first = layers[i].first;
+    let second = layers[i].second;
+
+    context.drawImage(first.img, 0, first.y, boardWidth, 2000);
+    context.drawImage(second.img, 0, second.y, boardWidth, 2000);
+  }
 
   doodlerSprite = new Image();
   doodlerSprite.src = "./assets/border-sprite.png";
@@ -109,9 +156,13 @@ const update = () => {
 
   context.clearRect(0, 0, board.width, board.height);
 
-  context.drawImage(layer1, 0, 0, boardWidth, 2000);
-  context.drawImage(layer2, 0, 0, boardWidth, 2000);
-  context.drawImage(layer3, 0, 0, boardWidth, 2000);
+  for (let i = 0; i < layers.length; i++) {
+    let first = layers[i].first;
+    let second = layers[i].second;
+
+    context.drawImage(first.img, 0, first.y, boardWidth, 2000);
+    context.drawImage(second.img, 0, second.y, boardWidth, 2000);
+  }
 
   //doodler
   doodler.x += velocityX;
@@ -131,6 +182,20 @@ const update = () => {
     doodler.state = "startFall";
   } else if (velocityY > 4 && velocityY < 6) {
     doodler.state = "falling";
+  }
+
+  //layers
+  for (let i = 0; i < layers.length; i++) {
+    let first = layers[i].first;
+    let second = layers[i].second;
+    if (first.y >= boardHeight) first.y = initialY - layersHeight;
+    if (second.y >= boardHeight) second.y = initialY - layersHeight;
+    if (first.y > second.y && Math.abs(second.y - first.y) > layersHeight) {
+      second.y = first.y - layersHeight;
+    }
+    if (second.y > first.y && Math.abs(first.y - second.y) > layersHeight) {
+      first.y = second.y - layersHeight;
+    }
   }
 
   //move doodler outside of board
@@ -173,8 +238,16 @@ const update = () => {
 
     // collision
     if (doodler.y + doodler.height < (boardHeight * 1) / 5) {
+      if (i < layers.length) {
+        layers[i].first.y -= initialVelocity - 2 + layers[i].first.speed;
+        layers[i].second.y -= initialVelocity - 2 + layers[i].second.speed;
+      }
       platform.y -= initialVelocity - 2;
     } else if (velocityY < -2 && doodler.y + doodler.height < (boardHeight * 3) / 4) {
+      if (i < layers.length) {
+        layers[i].first.y -= initialVelocity + layers[i].first.speed;
+        layers[i].second.y -= initialVelocity + layers[i].second.speed;
+      }
       platform.y -= initialVelocity + 2;
       doodler.y += gravity;
     }
